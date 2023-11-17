@@ -3,7 +3,7 @@ kind: Provider
 metadata:
   name: provider-gcp-compute
 spec:
-  package: xpkg.upbound.io/upbound/provider-gcp-storage:v0.38.1
+  package: xpkg.upbound.io/upbound/provider-gcp-compute:v0.38.1
 ---
 apiVersion: pkg.crossplane.io/v1alpha1
 kind: ControllerConfig
@@ -16,5 +16,4 @@ spec:
   args:
     - --poll=10m
     - -d
-    - --enable-management-policies
-    - --provider-ttl=600
+    - --provider-ttl=300

@@ -79,7 +79,7 @@ metadata:
 spec:
   forProvider:
     scheduling:
-      preemptible: true
+      - preemptible: true
     bootDisk:
       - initializeParams:
           - image: ubuntu-os-cloud/ubuntu-2004-lts
@@ -109,8 +109,9 @@ spec:
     machineType: e2-medium
     networkInterface:
       - networkSelector:
-          purpose: code-challenge
-          type: network
+          matchLabels:
+            purpose: code-challenge
+            type: network
         subnetworkSelector:
           matchLabels:
             purpose: code-challenge

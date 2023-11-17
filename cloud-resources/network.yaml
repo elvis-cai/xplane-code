@@ -29,3 +29,90 @@ spec:
     secondaryIpRange:
       - ipCidrRange: 192.168.1.0/24
         rangeName: e-secondary-range-update1
+---
+apiVersion: compute.gcp.upbound.io/v1beta1
+kind: Router
+metadata:
+  labels:
+    purpose: code-challenge
+    team: infra
+    type: router
+  name: e-router
+spec:
+  forProvider:
+    bgp:
+      - asn: 64514
+    networkSelector:
+      matchLabels:
+        purpose: code-challenge
+        type: network
+    region: asia-southeast1
+---
+apiVersion: compute.gcp.upbound.io/v1beta1
+kind: RouterNAT
+metadata:
+  labels:
+    type: nat
+    purpose: code-challenge
+    team: infra
+  name: e-cloud-nat
+spec:
+  forProvider:
+    logConfig:
+      - enable: true
+        filter: ERRORS_ONLY
+    natIpAllocateOption: AUTO_ONLY
+    region: asia-southeast1
+    routerSelector:
+      matchLabels:
+        team: infra 
+        type: router
+    sourceSubnetworkIpRangesToNat: ALL_SUBNETWORKS_ALL_IP_RANGES
+---
+apiVersion: compute.gcp.upbound.io/v1beta1
+kind: Instance
+metadata:
+  labels:
+      purpose: code-challenge
+      type: vm
+  name: code-challenge-vm
+spec:
+  forProvider:
+    scheduling:
+      preemptible: true
+    bootDisk:
+      - initializeParams:
+          - image: ubuntu-os-cloud/ubuntu-2004-lts
+    metadata:
+      environment: dev
+      domain: infra
+    metadataStartupScript: |
+      #!/bin/bash
+      # Update and Install Prerequisites
+      apt-get update
+      apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+
+      # Install Docker
+      curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+      add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+      apt-get update
+      apt-get install -y docker-ce docker-ce-cli containerd.io
+
+      # Install k3d
+      curl -s https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
+
+      # Install kubectl
+      curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+      echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | tee -a /etc/apt/sources.list.d/kubernetes.list
+      apt-get update
+      apt-get install -y kubectl
+    machineType: e2-medium
+    networkInterface:
+      - networkSelector:
+          purpose: code-challenge
+          type: network
+        subnetworkSelector:
+          matchLabels:
+            purpose: code-challenge
+            type: subnetwork
+    zone: asia-southeast1-a

@@ -1,0 +1,20 @@
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: provider-gcp-compute
+spec:
+  package: xpkg.upbound.io/upbound/provider-gcp-storage:v0.38.1
+---
+apiVersion: pkg.crossplane.io/v1alpha1
+kind: ControllerConfig
+metadata:
+  name: custom-gcp-config
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  serviceAccountName: crossplane
+  args:
+    - --poll=10m
+    - -d
+    - --enable-management-policies
+    - --provider-ttl=600

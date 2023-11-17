@@ -1,0 +1,31 @@
+apiVersion: compute.gcp.upbound.io/v1beta1
+kind: Network
+metadata:
+  labels:
+    team: infra
+    purpose: code-challenge
+    type: network
+  name: ephemeral-network
+spec:
+  forProvider:
+    autoCreateSubnetworks: false
+---
+apiVersion: compute.gcp.upbound.io/v1beta1
+kind: Subnetwork
+metadata:
+  labels:
+    team: infra
+    purpose: code-challenge
+    type: subnetwork
+  name: e-subnet-sg
+spec:
+  forProvider:
+    ipCidrRange: 10.1.0.0/16
+    networkSelector:
+      matchLabels:
+        purpose: code-challenge
+        type: network
+    region: asia-southeast1
+    secondaryIpRange:
+      - ipCidrRange: 192.168.1.0/24
+        rangeName: e-secondary-range-update1

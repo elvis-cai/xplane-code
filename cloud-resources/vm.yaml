@@ -7,9 +7,6 @@ metadata:
   name: code-challenge-vm
 spec:
   forProvider:
-    scheduling:
-      - preemptible: true
-        automaticRestart: false
     bootDisk:
       - initializeParams:
           - image: ubuntu-os-cloud/ubuntu-2004-lts

@@ -27,7 +27,7 @@ spec:
 
       # Install k3d
       curl -s https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
-      k3d cluster create code-challenge --k3s-arg="--disable=traefik@server:0"
+      k3d cluster create code-challenge --k3s-arg="--disable=traefik@server:0" --kubeconfig-update-default
 
       # Install Helm
       curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash

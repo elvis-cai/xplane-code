@@ -28,6 +28,8 @@ spec:
       # Install k3d
       curl -s https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
       k3d cluster create code-challenge --k3s-arg="--disable=traefik@server:0" --kubeconfig-update-default
+      mkdir -p /root/.kube/
+      k3d kubeconfig get code-challenge > /root/.kube/config
 
       # Install Helm
       curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
@@ -37,6 +39,9 @@ spec:
       echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | tee -a /etc/apt/sources.list.d/kubernetes.list
       apt-get update
       apt-get install -y kubectl
+      git clone https://github.com/ahmetb/kubectx /opt/kubectx
+      ln -s /opt/kubectx/kubectx /usr/local/bin/kubectx
+      ln -s /opt/kubectx/kubens /usr/local/bin/kubens
 
       # Install Nginx Ingress
       helm upgrade --install ingress-nginx ingress-nginx \
